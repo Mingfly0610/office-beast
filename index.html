@@ -272,10 +272,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .quiz-option:hover {
-            background-color: #FFD306 !important;
-        }
-
         .quiz-option:active, .quiz-option.selected {
             transform: translate(4px, 4px);
             box-shadow: none !important;
@@ -368,7 +364,6 @@
         <!-- 首頁 -->
         <div id="page-home" class="page active">
             <div class="flex flex-col items-center h-full pt-12 pb-10">
-                <!-- 更新後的標籤文字 -->
                 <div class="inline-block px-5 py-1.5 rounded-full bg-white text-[#111] text-[11px] font-black tracking-[0.1em] mb-12 mt-4 border-2 border-[#111] shadow-sm">
                     這是游方銘做的小測驗-測試中
                 </div>
@@ -510,18 +505,26 @@
             clickSFX.play().catch(e => console.log("SFX 播放被阻擋"));
         }
 
-        // ================= 題目資料 =================
         const questions = [
             { q: "星期一早上剛進辦公室，<br>你做的第一件事是？", options: [{ text: "立刻打開信箱，<br>安排整週作戰計畫", score: 0 }, { text: "默默去茶水間泡杯咖啡，<br>喚醒靈魂", score: 1 }, { text: "跟隔壁同事熱情早安，<br>交換週末八卦", score: 2 }, { text: "冷靜觀察大家，<br>默默開始處理例行公事", score: 3 }] },
             { q: "老闆突然指派一個<br>沒人想接的超難專案，<br>你心裡的OS？", options: [{ text: "「太棒了！<br>這是我展現能力的好機會！」", score: 0 }, { text: "「蛤...為什麼是我？<br>能推掉嗎...」", score: 1 }, { text: "「我得趕快找幾個好隊友一起carry！」", score: 2 }, { text: "「先冷靜分析風險與資源再說。」", score: 3 }] },
             { q: "期待已久的午休時間到了，<br>你通常怎麼度過？", options: [{ text: "邊吃飯邊看工作資料或產業新聞", score: 0 }, { text: "吃飽直接趴在桌上秒睡，<br>雷打不動", score: 1 }, { text: "揪團訂外送，<br>邊吃邊跟同事大聲聊天", score: 2 }, { text: "一個人去外面散步吹風，<br>享受獨處時光", score: 3 }] },
             { q: "遇到雷隊友搞砸進度，<br>你會怎麼處理？", options: [{ text: "直接點出問題，<br>要求他立刻改善", score: 0 }, { text: "表面沒事，<br>私下默默幫他收拾爛攤子", score: 1 }, { text: "找其他同事抱怨，<br>但還是會一起把事做完", score: 2 }, { text: "重新分配工作架構，<br>避免他再出錯", score: 3 }] },
-            { q: "下班時間到了，<br>但手邊工作還沒告一段落，你會？", options: [{ text: "留下來加班！<br>今日事今日畢！", score: 0 }, { text: "時間一到準時閃人，<br>明天再說！", score: 1 }, { text: "帶回家舒服地躺在沙發上繼續做", score: 2 }, { text: "評估輕重緩急，<br>不急的就列入明天代辦", score: 3 }] }
+            { 
+                /* 依照要求更新 Q5 文字斷行 */
+                q: "下班時間到了，<br>但手邊工作還沒告一段落，<br>你會？", 
+                options: [
+                    { text: "留下來加班！<br>今日事今日畢！", score: 0 }, 
+                    { text: "時間一到準時閃人，<br>明天再說！", score: 1 }, 
+                    { text: "帶回家舒服地躺在沙發上繼續做", score: 2 }, 
+                    { text: "評估輕重緩急，<br>不急的就列入明天代辦", score: 3 }
+                ] 
+            }
         ];
 
         const resultsData = [
             { title: "霸道總裁獅", icon: "🦁", tags: ["領袖氣質", "目標導向", "行動派"], desc: "你天生自帶氣場，是團隊中的核心引擎！遇到困難從不退縮，反而覺得是挑戰。雖然有時會讓人覺得稍微強勢，但大家都很依賴你的決斷力。" },
-            { title: "敏捷閃電豹", icon: "🐆", tags: ["效率至上", "直球對決", "討厭拖拉"], desc: "天下武功，唯快不破！你是職場中的效率狂魔，最受不了慢吞吞的節奏。你能在最短時間內找到解決方案，執行力驚人。" },
+            { title: "敏捷閃電豹", icon: "🐆", tags: ["效率至上", "直球對決", "討厭拖拉"], desc: "天下武功，唯快不破！你是職場中的效率狂魔，最受不了慢吞吞的節奏。你能在最短時間內找到解決方案，執行力驚力。" },
             { title: "人氣王海豚", icon: "🐬", tags: ["氣氛擔當", "高EQ", "神級公關"], desc: "你擁有超強的同理心與社交技巧，是辦公室裡的潤滑劑。無論多僵的場面，你都能輕鬆化解。大家都喜歡跟你共事！" },
             { title: "靈活變色龍", icon: "🦎", tags: ["適應力強", "八面玲瓏", "生存大師"], desc: "你擁有極強的環境適應力，能根據不同老闆或專案隨時切換模式。遇到危機總能巧妙避開，不管環境怎麼變，你都能找到舒適圈。" },
             { title: "智慧貓頭鷹", icon: "🦉", tags: ["冷靜分析", "細節控", "邏輯縝密"], desc: "你是團隊中的智庫！做事條理分明，喜歡用數據和邏輯說話。遇到危機時最冷靜的就是你，總能找出別人忽略的盲點。雖然話不多，但一開口就是關鍵。" },
