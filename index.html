@@ -24,7 +24,6 @@
 
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            /* 背景設定在 body，確保延伸到兩邊 */
             background-color: var(--bg-color);
             background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
             background-size: 20px 20px;
@@ -38,25 +37,23 @@
             transition: background-color 0.4s ease;
         }
 
-        /* 當進入結果頁時切換 body 背景 */
         body.result-mode {
             --bg-color: #ec4899;
             --dot-color: #ffffff;
         }
 
-        /* 模擬手機外觀容器：寬度限制在 414px 且置中 */
         #app-container {
             width: 100%;
             max-width: 414px;
             height: 100dvh; 
-            background-color: transparent; /* 讓 body 背景穿透 */
+            background-color: transparent; 
             position: relative;
             overflow: hidden; 
             display: flex;
             flex-direction: column;
         }
 
-        /* ================= 跑馬燈動畫 (置頂且寬度隨 body) ================= */
+        /* ================= 跑馬燈動畫 (無縫循環版) ================= */
         .marquee-bar {
             background-color: #111;
             color: white;
@@ -88,8 +85,106 @@
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-        /* ============================================== */
 
+        /* ================= 音樂控制按鈕 ================= */
+        #music-toggle {
+            position: absolute;
+            top: 120px; 
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid #111;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 #111;
+            transition: all 0.2s;
+        }
+        #music-toggle:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* ================= 普普風爆裂動態效果 (含 GO!) ================= */
+        .pop-burst-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 500;
+            display: none;
+            overflow: hidden;
+        }
+
+        .pop-burst-overlay.active {
+            display: block;
+        }
+
+        .burst-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 150vmax;
+            height: 150vmax;
+            background-color: #FF00FF; 
+            background-image: radial-gradient(white 20%, transparent 20%);
+            background-size: 30px 30px;
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        .burst-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0) rotate(-15deg);
+            color: #ffffff;
+            font-size: 8rem;
+            font-weight: 900;
+            font-style: italic;
+            text-align: center;
+            line-height: 1;
+            white-space: nowrap;
+            z-index: 510;
+            text-shadow: 
+                -4px -4px 0 #111,  
+                 4px -4px 0 #111,
+                -4px  4px 0 #111,
+                 4px  4px 0 #111,
+                 10px 10px 0 #FFE500; 
+            opacity: 0;
+        }
+
+        .pop-burst-overlay.active .burst-circle {
+            animation: burstEffect 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .pop-burst-overlay.active .burst-text {
+            animation: textPopEffect 0.6s cubic-bezier(0.17, 0.67, 0.83, 1) forwards;
+        }
+
+        @keyframes burstEffect {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            70% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
+        }
+
+        @keyframes textPopEffect {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.2) rotate(-5deg); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1) rotate(5deg); opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.5) rotate(10deg); opacity: 0; }
+        }
+
+        /* ================= 頁面設定 ================= */
         .page {
             display: none;
             flex-direction: column;
@@ -98,7 +193,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            padding: 20px; /* 這確保了內容在手機上不會貼邊 */
+            padding: 20px; 
             box-sizing: border-box;
             overflow-y: auto; 
             overflow-x: hidden;
@@ -115,7 +210,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 標題設計 */
         .title-wrapper {
             position: relative;
             display: flex;
@@ -172,10 +266,16 @@
             50% { transform: translateY(-8px) rotate(-5deg); }
         }
 
+        /* ================= 選項樣式 ================= */
         .quiz-option {
             transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
             -webkit-tap-highlight-color: transparent;
         }
+
+        .quiz-option:hover {
+            background-color: #FFD306 !important;
+        }
+
         .quiz-option:active, .quiz-option.selected {
             transform: translate(4px, 4px);
             box-shadow: none !important;
@@ -201,7 +301,6 @@
         }
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* 分享彈窗 */
         #share-modal-overlay {
             position: absolute;
             inset: 0;
@@ -234,9 +333,30 @@
 </head>
 <body>
 
+    <!-- 普普風爆裂動畫容器 -->
+    <div id="pop-burst" class="pop-burst-overlay">
+        <div class="burst-circle"></div>
+        <div class="burst-text">GO!</div>
+    </div>
+
+    <!-- 背景音樂音軌 -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 點擊音效音軌 -->
+    <audio id="click-sfx" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2571-preview.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="toast">提示訊息</div>
 
     <div id="app-container">
+        <!-- 音樂控制開關 -->
+        <div id="music-toggle" onclick="toggleMusic()">
+            <i id="music-icon" class="ph-bold ph-speaker-slash text-xl text-[#111]"></i>
+        </div>
+
         <!-- 頂端跑馬燈 -->
         <div class="marquee-bar">
             <div class="marquee-inner">
@@ -248,8 +368,9 @@
         <!-- 首頁 -->
         <div id="page-home" class="page active">
             <div class="flex flex-col items-center h-full pt-12 pb-10">
-                <div class="inline-block px-5 py-1.5 rounded-full bg-white text-[#111] text-[11px] font-black tracking-[0.25em] mb-12 mt-4 border-2 border-[#111] shadow-sm">
-                    2026 桔子公關職場人格測驗
+                <!-- 更新後的標籤文字 -->
+                <div class="inline-block px-5 py-1.5 rounded-full bg-white text-[#111] text-[11px] font-black tracking-[0.1em] mb-12 mt-4 border-2 border-[#111] shadow-sm">
+                    這是游方銘做的小測驗-測試中
                 </div>
                 <div class="flex flex-col items-center w-full flex-grow justify-center">
                     <div class="title-wrapper">
@@ -317,13 +438,12 @@
                     </div>
                 </div>
 
-                <!-- 底部按鈕區：移除背景色塊，直接漂浮在網點上 -->
                 <div class="w-full p-4 flex justify-between gap-4 flex-shrink-0">
-                    <button onclick="restartQuiz()" class="flex-1 py-4 bg-white border-[3px] border-[#111] rounded-[20px] shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 active:translate-y-[4px] active:shadow-none">
+                    <button onclick="restartQuiz()" class="flex-1 py-4 bg-white border-[3px] border-[#111] rounded-[20px] shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 text-[#111] transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none">
                         <i class="ph-bold ph-arrow-counter-clockwise text-2xl"></i>
                         <span class="text-sm font-black">再測一次</span>
                     </button>
-                    <button onclick="showShareModal()" class="flex-1 py-4 bg-[#FFD306] border-[3px] border-[#111] rounded-[20px] shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 active:translate-y-[4px] active:shadow-none">
+                    <button onclick="showShareModal()" class="flex-1 py-4 bg-[#FFD306] border-[3px] border-[#111] rounded-[20px] shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 text-[#111] transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none">
                         <i class="ph-bold ph-share-network text-2xl"></i>
                         <span class="text-sm font-black">分享結果</span>
                     </button>
@@ -352,15 +472,15 @@
                         <span class="text-[11px] font-black text-gray-600">複製連結</span>
                     </div>
                     <div class="social-btn flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('fb')">
-                        <div class="w-14 h-14 bg-[#1877F2] rounded-2xl flex items-center justify-center text-white font-black text-[22px]">FB</div>
+                        <div class="social-icon-box bg-[#1877F2] rounded-2xl flex items-center justify-center text-white font-black text-[22px]">FB</div>
                         <span class="text-[11px] font-black text-gray-600">Facebook</span>
                     </div>
                     <div class="social-btn flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('line')">
-                        <div class="w-14 h-14 bg-[#06C755] rounded-2xl flex items-center justify-center text-white font-black text-[18px]">Line</div>
+                        <div class="social-icon-box bg-[#06C755] rounded-2xl flex items-center justify-center text-white font-black text-[18px]">Line</div>
                         <span class="text-[11px] font-black text-gray-600">LINE</span>
                     </div>
                     <div class="social-btn flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('threads')">
-                        <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center text-white font-black text-[14px]">Threads</div>
+                        <div class="social-icon-box bg-black rounded-2xl flex items-center justify-center text-white font-black text-[14px]">Threads</div>
                         <span class="text-[11px] font-black text-gray-600">Threads</span>
                     </div>
                 </div>
@@ -369,6 +489,28 @@
     </div>
 
     <script>
+        // ================= 音樂與音效邏輯 =================
+        const bgMusic = document.getElementById('bg-music');
+        const clickSFX = document.getElementById('click-sfx');
+        const musicIcon = document.getElementById('music-icon');
+
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play().then(() => {
+                    musicIcon.className = "ph-bold ph-speaker-high text-xl text-[#111]";
+                }).catch(e => console.log("播放被阻擋"));
+            } else {
+                bgMusic.pause();
+                musicIcon.className = "ph-bold ph-speaker-slash text-xl text-[#111]";
+            }
+        }
+
+        function playClickSFX() {
+            clickSFX.currentTime = 0;
+            clickSFX.play().catch(e => console.log("SFX 播放被阻擋"));
+        }
+
+        // ================= 題目資料 =================
         const questions = [
             { q: "星期一早上剛進辦公室，<br>你做的第一件事是？", options: [{ text: "立刻打開信箱，<br>安排整週作戰計畫", score: 0 }, { text: "默默去茶水間泡杯咖啡，<br>喚醒靈魂", score: 1 }, { text: "跟隔壁同事熱情早安，<br>交換週末八卦", score: 2 }, { text: "冷靜觀察大家，<br>默默開始處理例行公事", score: 3 }] },
             { q: "老闆突然指派一個<br>沒人想接的超難專案，<br>你心裡的OS？", options: [{ text: "「太棒了！<br>這是我展現能力的好機會！」", score: 0 }, { text: "「蛤...為什麼是我？<br>能推掉嗎...」", score: 1 }, { text: "「我得趕快找幾個好隊友一起carry！」", score: 2 }, { text: "「先冷靜分析風險與資源再說。」", score: 3 }] },
@@ -388,9 +530,7 @@
             { title: "療癒系水豚", icon: "🦦", tags: ["情緒穩定", "極度Chill", "與世無爭"], desc: "你是職場中的最高境界：處變不驚。不管天塌下來還是老闆發飆，你都能保持內心的平靜。同事跟你相處會覺得壓力瞬間消失！" }
         ];
 
-        let currentQuestionIndex = 0;
-        let totalScore = 0;
-        let currentResultTitle = "";
+        let currentQuestionIndex = 0, totalScore = 0, currentResultTitle = "";
 
         const showToast = (msg) => {
             const t = document.getElementById('toast');
@@ -398,34 +538,63 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         };
 
-        const switchPage = (hide, show, isResult = false) => {
+        const switchPage = (hidePage, showPage, isResult = false) => {
             if (isResult) document.body.classList.add('result-mode');
             else document.body.classList.remove('result-mode');
-            hide.style.display = 'none';
-            hide.classList.remove('active');
-            show.style.display = 'flex';
-            void show.offsetWidth; 
-            show.classList.add('active');
-            show.scrollTop = 0;
+            hidePage.style.display = 'none';
+            hidePage.classList.remove('active');
+            showPage.style.display = 'flex';
+            void showPage.offsetWidth; 
+            showPage.classList.add('active');
+            showPage.scrollTop = 0;
         };
 
+        function triggerPopBurst(callback) {
+            const burst = document.getElementById('pop-burst');
+            burst.classList.add('active');
+            setTimeout(() => {
+                if (callback) callback();
+            }, 350); 
+            setTimeout(() => {
+                burst.classList.remove('active');
+            }, 800); 
+        }
+
         function startQuiz() {
-            currentQuestionIndex = 0; totalScore = 0;
-            switchPage(document.getElementById('page-home'), document.getElementById('page-quiz'));
-            renderQuestion(true);
+            playClickSFX();
+            triggerPopBurst(() => {
+                bgMusic.play().then(() => {
+                    document.getElementById('music-icon').className = "ph-bold ph-speaker-high text-xl text-[#111]";
+                }).catch(e => console.log("音樂播放請求被攔截"));
+
+                currentQuestionIndex = 0;
+                totalScore = 0;
+                switchPage(document.getElementById('page-home'), document.getElementById('page-quiz'));
+                renderQuestion(true);
+            });
         }
 
         function restartQuiz() {
-            switchPage(document.querySelector('.page.active'), document.getElementById('page-home'));
+            playClickSFX();
+            const activePage = document.querySelector('.page.active');
+            switchPage(activePage, document.getElementById('page-home'));
         }
 
         function renderQuestion(isFirst = false) {
             const qData = questions[currentQuestionIndex];
-            document.getElementById('progress-bar').style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+            const progressPercentage = (currentQuestionIndex / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
             document.getElementById('question-counter').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
             const quizCard = document.getElementById('quiz-card');
-            
-            const update = () => {
+
+            if (!isFirst) {
+                quizCard.style.opacity = 0;
+                setTimeout(updateContent, 200);
+            } else {
+                updateContent();
+            }
+
+            function updateContent() {
                 document.getElementById('question-text').innerHTML = `Q${currentQuestionIndex + 1}. ${qData.q}`;
                 const container = document.getElementById('options-container');
                 container.innerHTML = '';
@@ -433,26 +602,30 @@
                     const btn = document.createElement('button');
                     btn.className = "quiz-option w-full py-4 px-4 rounded-[20px] bg-white border-[3px] border-[#111] text-[#111] font-black text-base text-center shadow-[4px_4px_0_#111] cursor-pointer leading-snug";
                     btn.innerHTML = `<span class="pointer-events-none">${opt.text}</span>`;
-                    btn.onclick = () => {
-                        const allBtns = container.querySelectorAll('button');
-                        allBtns.forEach(b => b.style.pointerEvents = 'none');
-                        btn.classList.add('selected');
-                        totalScore += opt.score;
-                        setTimeout(() => {
-                            currentQuestionIndex++;
-                            if (currentQuestionIndex < questions.length) renderQuestion();
-                            else { document.getElementById('progress-bar').style.width = `100%`; setTimeout(showResult, 200); }
-                        }, 300);
-                    };
+                    btn.onclick = () => handleOptionClick(btn, opt.score);
                     container.appendChild(btn);
                 });
                 quizCard.style.opacity = 1;
-            };
-
-            if (!isFirst) { quizCard.style.opacity = 0; setTimeout(update, 200); } else update();
+            }
         }
 
-        function showResult() {
+        function handleOptionClick(btnElement, score) {
+            playClickSFX();
+            const allBtns = document.querySelectorAll('.quiz-option');
+            allBtns.forEach(b => { b.onclick = null; b.style.pointerEvents = 'none'; });
+            btnElement.classList.add('selected');
+            totalScore += score;
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) renderQuestion();
+                else {
+                    document.getElementById('progress-bar').style.width = `100%`;
+                    setTimeout(calculateAndShowResult, 200);
+                }
+            }, 300);
+        }
+
+        function calculateAndShowResult() {
             let resultIndex = Math.min(Math.floor(totalScore / 2), resultsData.length - 1);
             const result = resultsData[resultIndex];
             currentResultTitle = result.title;
@@ -473,6 +646,7 @@
         }
 
         function showShareModal() {
+            playClickSFX();
             document.getElementById('share-preview-title').textContent = `我的職場神獸揭曉 - ${currentResultTitle}`;
             const overlay = document.getElementById('share-modal-overlay');
             overlay.style.display = 'block';
@@ -482,12 +656,16 @@
         }
 
         function closeShareModal() {
+            playClickSFX();
             document.getElementById('share-modal').classList.remove('active');
             document.getElementById('share-modal-overlay').classList.remove('active');
-            setTimeout(() => { document.getElementById('share-modal-overlay').style.display = 'none'; }, 300);
+            setTimeout(() => {
+                document.getElementById('share-modal-overlay').style.display = 'none';
+            }, 300);
         }
 
         function copyResultLink() {
+            playClickSFX();
             const shareText = `我剛測出我是【${currentResultTitle}】！你也來測測看你在職場裡是哪種神獸吧！\n${window.location.href}`;
             const dummy = document.createElement('input');
             document.body.appendChild(dummy);
@@ -499,6 +677,7 @@
         }
 
         function shareSocial(platform) {
+            playClickSFX();
             const url = encodeURIComponent(window.location.href);
             const text = encodeURIComponent(`我剛測出我是【${currentResultTitle}】！你也來測測看你在職場裡是哪種神獸吧！`);
             let shareUrl = "";
