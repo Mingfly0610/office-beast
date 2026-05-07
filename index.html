@@ -446,7 +446,7 @@
             </div>
         </div>
 
-        <!-- 分享彈窗 -->
+        <!-- 分享彈窗 (修正圖標形狀與文字對齊) -->
         <div id="share-modal-overlay" onclick="closeShareModal()">
             <div id="share-modal" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center mb-6">
@@ -461,22 +461,31 @@
                     <p id="share-preview-title" class="font-black text-[#111] text-lg mb-2">我的職場神獸揭曉</p>
                     <p class="text-gray-500 text-sm font-bold">點擊按鈕將結果分享給你的戰友們吧！</p>
                 </div>
-                <div class="flex justify-between items-start gap-4">
-                    <div class="social-btn flex flex-col items-center gap-2 cursor-pointer" onclick="copyResultLink()">
-                        <div class="w-14 h-14 bg-gray-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-sm"><i class="ph-bold ph-link-simple"></i></div>
-                        <span class="text-[11px] font-black text-gray-600">複製連結</span>
+                <!-- 調整點：使用 flex 與固定容器寬度確保對齊 -->
+                <div class="flex justify-between items-start gap-2 px-1">
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="copyResultLink()">
+                        <div class="w-14 h-14 bg-gray-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-sm flex-shrink-0">
+                            <i class="ph-bold ph-link-simple"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-gray-600 text-center leading-tight">複製連結</span>
                     </div>
-                    <div class="social-btn flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('fb')">
-                        <div class="social-icon-box bg-[#1877F2] rounded-2xl flex items-center justify-center text-white font-black text-[22px]">FB</div>
-                        <span class="text-[11px] font-black text-gray-600">Facebook</span>
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('fb')">
+                        <div class="w-14 h-14 bg-[#1877F2] rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-sm flex-shrink-0">
+                            FB
+                        </div>
+                        <span class="text-[11px] font-black text-gray-600 text-center leading-tight">Facebook</span>
                     </div>
-                    <div class="social-btn flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('line')">
-                        <div class="social-icon-box bg-[#06C755] rounded-2xl flex items-center justify-center text-white font-black text-[18px]">Line</div>
-                        <span class="text-[11px] font-black text-gray-600">LINE</span>
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('line')">
+                        <div class="w-14 h-14 bg-[#06C755] rounded-2xl flex items-center justify-center text-white font-black text-base shadow-sm flex-shrink-0">
+                            LINE
+                        </div>
+                        <span class="text-[11px] font-black text-gray-600 text-center leading-tight">LINE</span>
                     </div>
-                    <div class="social-btn flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('threads')">
-                        <div class="social-icon-box bg-black rounded-2xl flex items-center justify-center text-white font-black text-[14px]">Threads</div>
-                        <span class="text-[11px] font-black text-gray-600">Threads</span>
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('threads')">
+                        <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center text-white font-black text-[11px] shadow-sm flex-shrink-0">
+                            Threads
+                        </div>
+                        <span class="text-[11px] font-black text-gray-600 text-center leading-tight">Threads</span>
                     </div>
                 </div>
             </div>
@@ -511,7 +520,6 @@
             { q: "期待已久的午休時間到了，<br>你通常怎麼度過？", options: [{ text: "邊吃飯邊看工作資料或產業新聞", score: 0 }, { text: "吃飽直接趴在桌上秒睡，<br>雷打不動", score: 1 }, { text: "揪團訂外送，<br>邊吃邊跟同事大聲聊天", score: 2 }, { text: "一個人去外面散步吹風，<br>享受獨處時光", score: 3 }] },
             { q: "遇到雷隊友搞砸進度，<br>你會怎麼處理？", options: [{ text: "直接點出問題，<br>要求他立刻改善", score: 0 }, { text: "表面沒事，<br>私下默默幫他收拾爛攤子", score: 1 }, { text: "找其他同事抱怨，<br>但還是會一起把事做完", score: 2 }, { text: "重新分配工作架構，<br>避免他再出錯", score: 3 }] },
             { 
-                /* 依照要求更新 Q5 文字斷行 */
                 q: "下班時間到了，<br>但手邊工作還沒告一段落，<br>你會？", 
                 options: [
                     { text: "留下來加班！<br>今日事今日畢！", score: 0 }, 
