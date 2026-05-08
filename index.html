@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>你是哪種職場神獸？ | 心理測驗</title>
+
+    <!-- 社群分享縮圖標籤 (不影響頁面版面) -->
+    <meta property="og:title" content="你是哪種職場神獸？ | 心理測驗">
+    <meta property="og:description" content="在危機四伏的職場叢林中，你扮演著什麼樣的角色？只需 5 題，立刻測出你的隱藏屬性！">
+    <meta property="og:image" content="share-preview.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="share-preview.jpg">
+    <link rel="image_src" href="share-preview.jpg">
     
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -37,6 +46,20 @@
             transition: background-color 0.4s ease;
         }
 
+        /* 螢幕震動效果 */
+        @keyframes screenShake {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-5px, -5px); }
+            20% { transform: translate(5px, 5px); }
+            30% { transform: translate(-5px, 5px); }
+            40% { transform: translate(5px, -5px); }
+            50% { transform: translate(-2px, -2px); }
+            100% { transform: translate(0, 0); }
+        }
+        .shake-active {
+            animation: screenShake 0.4s ease-out;
+        }
+
         body.result-mode {
             --bg-color: #ec4899;
             --dot-color: #ffffff;
@@ -53,7 +76,7 @@
             flex-direction: column;
         }
 
-        /* ================= 跑馬燈動畫 (無縫循環版) ================= */
+        /* ================= 跑馬燈動畫 ================= */
         .marquee-bar {
             background-color: #111;
             color: white;
@@ -131,11 +154,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            width: 150vmax;
-            height: 150vmax;
+            width: 160vmax;
+            height: 160vmax;
             background-color: #FF00FF; 
             background-image: radial-gradient(white 20%, transparent 20%);
-            background-size: 30px 30px;
+            background-size: 40px 40px;
             border-radius: 50%;
             opacity: 0;
         }
@@ -146,7 +169,7 @@
             left: 50%;
             transform: translate(-50%, -50%) scale(0) rotate(-15deg);
             color: #ffffff;
-            font-size: 8rem;
+            font-size: clamp(6rem, 25vw, 10rem);
             font-weight: 900;
             font-style: italic;
             text-align: center;
@@ -154,37 +177,35 @@
             white-space: nowrap;
             z-index: 510;
             text-shadow: 
-                -4px -4px 0 #111,  
-                 4px -4px 0 #111,
-                -4px  4px 0 #111,
+                -5px -5px 0 #111,  
+                 5px -5px 0 #111,
+                -5px  5px 0 #111,
                  4px  4px 0 #111,
-                 10px 10px 0 #FFE500; 
+                 15px 15px 0 #FFE500; 
             opacity: 0;
         }
 
         .pop-burst-overlay.active .burst-circle {
-            animation: burstEffect 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: burstEffect 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .pop-burst-overlay.active .burst-text {
-            animation: textPopEffect 0.6s cubic-bezier(0.17, 0.67, 0.83, 1) forwards;
+            animation: textPopEffect 0.5s cubic-bezier(0.17, 0.67, 0.5, 1.3) forwards;
         }
 
         @keyframes burstEffect {
             0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-            70% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.05); opacity: 0; }
         }
 
         @keyframes textPopEffect {
             0% { transform: translate(-50%, -50%) scale(0) rotate(-15deg); opacity: 0; }
-            20% { transform: translate(-50%, -50%) scale(1.2) rotate(-5deg); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1) rotate(5deg); opacity: 1; }
-            80% { opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1.5) rotate(10deg); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.4) rotate(-5deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.6) rotate(10deg); opacity: 0; }
         }
 
-        /* ================= 頁面設定 ================= */
+        /* ================= 頁面基礎設定 ================= */
         .page {
             display: none;
             flex-direction: column;
@@ -327,7 +348,7 @@
         #share-modal.active { transform: translate(-50%, 0); }
     </style>
 </head>
-<body>
+<body id="main-body">
 
     <!-- 普普風爆裂動畫容器 -->
     <div id="pop-burst" class="pop-burst-overlay">
@@ -340,9 +361,9 @@
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 點擊音效音軌 -->
+    <!-- 一般按鈕點擊音效 -->
     <audio id="click-sfx" preload="auto">
-        <source src="https://assets.mixkit.co/active_storage/sfx/2568/2571-preview.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
     </audio>
 
     <div id="toast">提示訊息</div>
@@ -416,7 +437,7 @@
                 <div id="export-container" class="w-full p-2 flex-1 flex items-center">
                     <div id="result-card" class="bg-white rounded-[32px] p-6 border-[4px] border-[#111] shadow-[8px_8px_0_#111] flex flex-col items-center text-center relative overflow-hidden max-h-full w-full">
                         <div class="inline-block bg-[#FFD306] border-[2px] border-[#111] text-[#111] text-[10px] font-black px-4 py-1.5 rounded-full mt-2 mb-4 shadow-[2px_2px_0_#111] transform -rotate-2 flex-shrink-0">
-                            你的職場人格是
+                            你的職場神獸是
                         </div>
                         <div class="overflow-y-auto w-full flex flex-col items-center px-1">
                             <div id="result-icon" class="text-7xl mb-2 drop-shadow-md">🐾</div>
@@ -434,11 +455,11 @@
                 </div>
 
                 <div class="w-full p-4 flex justify-between gap-4 flex-shrink-0">
-                    <button onclick="restartQuiz()" class="flex-1 py-4 bg-white border-[3px] border-[#111] rounded-[20px] shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 text-[#111] transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none">
+                    <button onclick="restartQuiz()" class="flex-1 py-4 bg-white border-[3px] border-[#111] rounded-2xl shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 active:translate-y-[2px] active:shadow-none">
                         <i class="ph-bold ph-arrow-counter-clockwise text-2xl"></i>
                         <span class="text-sm font-black">再測一次</span>
                     </button>
-                    <button onclick="showShareModal()" class="flex-1 py-4 bg-[#FFD306] border-[3px] border-[#111] rounded-[20px] shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 text-[#111] transition-all active:translate-y-[4px] active:translate-x-[4px] active:shadow-none">
+                    <button onclick="showShareModal()" class="flex-1 py-4 bg-[#FFD306] border-[3px] border-[#111] rounded-2xl shadow-[4px_4px_0_#111] flex flex-col items-center justify-center gap-1 active:translate-y-[2px] active:shadow-none">
                         <i class="ph-bold ph-share-network text-2xl"></i>
                         <span class="text-sm font-black">分享結果</span>
                     </button>
@@ -461,28 +482,27 @@
                     <p id="share-preview-title" class="font-black text-[#111] text-lg mb-2">我的職場神獸揭曉</p>
                     <p class="text-gray-500 text-sm font-bold">點擊按鈕將結果分享給你的戰友們吧！</p>
                 </div>
-                <!-- 調整點：使用 flex 與固定容器寬度確保對齊 -->
                 <div class="flex justify-between items-start gap-2 px-1">
-                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="copyResultLink()">
-                        <div class="w-14 h-14 bg-gray-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-sm flex-shrink-0">
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer group" onclick="copyResultLink()">
+                        <div class="w-14 h-14 bg-gray-500 rounded-2xl flex items-center justify-center text-white text-3xl shadow-sm flex-shrink-0 transition-transform group-active:scale-90">
                             <i class="ph-bold ph-link-simple"></i>
                         </div>
                         <span class="text-[11px] font-black text-gray-600 text-center leading-tight">複製連結</span>
                     </div>
-                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('fb')">
-                        <div class="w-14 h-14 bg-[#1877F2] rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-sm flex-shrink-0">
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer group" onclick="shareSocial('fb')">
+                        <div class="w-14 h-14 bg-[#1877F2] rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-sm flex-shrink-0 transition-transform group-active:scale-90">
                             FB
                         </div>
                         <span class="text-[11px] font-black text-gray-600 text-center leading-tight">Facebook</span>
                     </div>
-                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('line')">
-                        <div class="w-14 h-14 bg-[#06C755] rounded-2xl flex items-center justify-center text-white font-black text-base shadow-sm flex-shrink-0">
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer group" onclick="shareSocial('line')">
+                        <div class="w-14 h-14 bg-[#06C755] rounded-2xl flex items-center justify-center text-white font-black text-base shadow-sm flex-shrink-0 transition-transform group-active:scale-90">
                             LINE
                         </div>
                         <span class="text-[11px] font-black text-gray-600 text-center leading-tight">LINE</span>
                     </div>
-                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer" onclick="shareSocial('threads')">
-                        <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center text-white font-black text-[11px] shadow-sm flex-shrink-0">
+                    <div class="flex-1 flex flex-col items-center gap-2 cursor-pointer group" onclick="shareSocial('threads')">
+                        <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center text-white font-black text-[11px] shadow-sm flex-shrink-0 transition-transform group-active:scale-90">
                             Threads
                         </div>
                         <span class="text-[11px] font-black text-gray-600 text-center leading-tight">Threads</span>
@@ -497,22 +517,47 @@
         const bgMusic = document.getElementById('bg-music');
         const clickSFX = document.getElementById('click-sfx');
         const musicIcon = document.getElementById('music-icon');
+        const body = document.getElementById('main-body');
+
+        // 音量優化
+        clickSFX.volume = 1.0;
+
+        function playMusic() {
+            bgMusic.play().then(() => {
+                musicIcon.className = "ph-bold ph-speaker-high text-xl text-[#111]";
+            }).catch(e => {
+                console.log("自動播放暫時被攔截...");
+            });
+        }
+
+        function pauseMusic() {
+            bgMusic.pause();
+            musicIcon.className = "ph-bold ph-speaker-slash text-xl text-[#111]";
+        }
 
         function toggleMusic() {
-            if (bgMusic.paused) {
-                bgMusic.play().then(() => {
-                    musicIcon.className = "ph-bold ph-speaker-high text-xl text-[#111]";
-                }).catch(e => console.log("播放被阻擋"));
-            } else {
-                bgMusic.pause();
-                musicIcon.className = "ph-bold ph-speaker-slash text-xl text-[#111]";
-            }
+            if (bgMusic.paused) playMusic();
+            else pauseMusic();
         }
 
         function playClickSFX() {
             clickSFX.currentTime = 0;
-            clickSFX.play().catch(e => console.log("SFX 播放被阻擋"));
+            clickSFX.volume = 1.0;
+            clickSFX.play().catch(e => {});
         }
+
+        // 音效預熱邏輯
+        window.onload = function() {
+            const initAudio = () => {
+                playMusic();
+                // 預熱點擊音效
+                clickSFX.play().then(() => { clickSFX.pause(); clickSFX.currentTime = 0; });
+                document.removeEventListener('click', initAudio);
+                document.removeEventListener('touchstart', initAudio);
+            };
+            document.addEventListener('click', initAudio, { once: true });
+            document.addEventListener('touchstart', initAudio, { once: true });
+        };
 
         const questions = [
             { q: "星期一早上剛進辦公室，<br>你做的第一件事是？", options: [{ text: "立刻打開信箱，<br>安排整週作戰計畫", score: 0 }, { text: "默默去茶水間泡杯咖啡，<br>喚醒靈魂", score: 1 }, { text: "跟隔壁同事熱情早安，<br>交換週末八卦", score: 2 }, { text: "冷靜觀察大家，<br>默默開始處理例行公事", score: 3 }] },
@@ -563,21 +608,18 @@
         function triggerPopBurst(callback) {
             const burst = document.getElementById('pop-burst');
             burst.classList.add('active');
-            setTimeout(() => {
-                if (callback) callback();
-            }, 350); 
-            setTimeout(() => {
+            body.classList.add('shake-active');
+            setTimeout(() => { if (callback) callback(); }, 300); 
+            setTimeout(() => { 
                 burst.classList.remove('active');
-            }, 800); 
+                body.classList.remove('shake-active');
+            }, 700); 
         }
 
         function startQuiz() {
             playClickSFX();
             triggerPopBurst(() => {
-                bgMusic.play().then(() => {
-                    document.getElementById('music-icon').className = "ph-bold ph-speaker-high text-xl text-[#111]";
-                }).catch(e => console.log("音樂播放請求被攔截"));
-
+                if (bgMusic.paused) playMusic();
                 currentQuestionIndex = 0;
                 totalScore = 0;
                 switchPage(document.getElementById('page-home'), document.getElementById('page-quiz'));
@@ -587,23 +629,18 @@
 
         function restartQuiz() {
             playClickSFX();
-            const activePage = document.querySelector('.page.active');
-            switchPage(activePage, document.getElementById('page-home'));
+            switchPage(document.querySelector('.page.active'), document.getElementById('page-home'));
         }
 
         function renderQuestion(isFirst = false) {
             const qData = questions[currentQuestionIndex];
-            const progressPercentage = (currentQuestionIndex / questions.length) * 100;
-            document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+            document.getElementById('progress-bar').style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
             document.getElementById('question-counter').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
             const quizCard = document.getElementById('quiz-card');
-
             if (!isFirst) {
                 quizCard.style.opacity = 0;
                 setTimeout(updateContent, 200);
-            } else {
-                updateContent();
-            }
+            } else updateContent();
 
             function updateContent() {
                 document.getElementById('question-text').innerHTML = `Q${currentQuestionIndex + 1}. ${qData.q}`;
@@ -612,7 +649,7 @@
                 qData.options.forEach((opt) => {
                     const btn = document.createElement('button');
                     btn.className = "quiz-option w-full py-4 px-4 rounded-[20px] bg-white border-[3px] border-[#111] text-[#111] font-black text-base text-center shadow-[4px_4px_0_#111] cursor-pointer leading-snug";
-                    btn.innerHTML = `<span class="pointer-events-none">${opt.text}</span>`;
+                    btn.innerHTML = `<span>${opt.text}</span>`;
                     btn.onclick = () => handleOptionClick(btn, opt.score);
                     container.appendChild(btn);
                 });
@@ -622,8 +659,7 @@
 
         function handleOptionClick(btnElement, score) {
             playClickSFX();
-            const allBtns = document.querySelectorAll('.quiz-option');
-            allBtns.forEach(b => { b.onclick = null; b.style.pointerEvents = 'none'; });
+            document.querySelectorAll('.quiz-option').forEach(b => b.style.pointerEvents = 'none');
             btnElement.classList.add('selected');
             totalScore += score;
             setTimeout(() => {
@@ -670,9 +706,7 @@
             playClickSFX();
             document.getElementById('share-modal').classList.remove('active');
             document.getElementById('share-modal-overlay').classList.remove('active');
-            setTimeout(() => {
-                document.getElementById('share-modal-overlay').style.display = 'none';
-            }, 300);
+            setTimeout(() => { document.getElementById('share-modal-overlay').style.display = 'none'; }, 300);
         }
 
         function copyResultLink() {
