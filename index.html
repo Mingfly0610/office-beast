@@ -723,15 +723,37 @@
 
         function shareSocial(platform) {
             playClickSFX();
-            const url = encodeURIComponent(window.location.href);
+            // 由於 FB Sharer 主要是抓取網址，如果是開發環境(localhost/blob)，分享效果會受限
+            const currentUrl = window.location.href;
+            const isLocal = currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1') || currentUrl.startsWith('blob:');
+            
+            const url = encodeURIComponent(currentUrl);
             const text = encodeURIComponent(`我剛測出我是【${currentResultTitle}】！你也來測測看你在職場裡是哪種神獸吧！`);
+            
             let shareUrl = "";
             switch(platform) {
-                case 'fb': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
-                case 'line': shareUrl = `https://line.me/R/msg/text/?${text}%20${url}`; break;
-                case 'threads': shareUrl = `https://www.threads.net/intent/post?text=${text}%20${url}`; break;
+                case 'fb': 
+                    // Facebook Sharer 只吃 u 參數，文字需由 OG tags 提供
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; 
+                    if (isLocal) {
+                        showToast("⚠️ 偵測到本機環境，FB分享需在正式網址方可完整顯示圖文");
+                    }
+                    break;
+                case 'line': 
+                    shareUrl = `https://line.me/R/msg/text/?${text}%20${url}`; 
+                    break;
+                case 'threads': 
+                    shareUrl = `https://www.threads.net/intent/post?text=${text}%20${url}`; 
+                    break;
             }
-            window.open(shareUrl, '_blank');
+            
+            if (shareUrl) {
+                // 使用 window.open 開啟分享視窗
+                const width = 600, height = 400;
+                const left = (window.innerWidth - width) / 2;
+                const top = (window.innerHeight - height) / 2;
+                window.open(shareUrl, 'shareWindow', `width=${width},height=${height},left=${left},top=${top},toolbar=0,status=0`);
+            }
             closeShareModal();
         }
     </script>
