@@ -733,7 +733,6 @@
             let shareUrl = "";
             switch(platform) {
                 case 'fb': 
-                    // Facebook Sharer 只吃 u 參數，文字需由 OG tags 提供
                     shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; 
                     if (isLocal) {
                         showToast("⚠️ 偵測到本機環境，FB分享需在正式網址方可完整顯示圖文");
@@ -748,11 +747,23 @@
             }
             
             if (shareUrl) {
-                // 使用 window.open 開啟分享視窗
-                const width = 600, height = 400;
-                const left = (window.innerWidth - width) / 2;
-                const top = (window.innerHeight - height) / 2;
-                window.open(shareUrl, 'shareWindow', `width=${width},height=${height},left=${left},top=${top},toolbar=0,status=0`);
+                // 判斷是否為行動裝置
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    // 手機版：直接用連結開啟，避免彈出視窗阻擋
+                    const a = document.createElement('a');
+                    a.href = shareUrl;
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    a.click();
+                } else {
+                    // 電腦版：使用小視窗彈出
+                    const width = 600, height = 500;
+                    const left = (window.innerWidth - width) / 2;
+                    const top = (window.innerHeight - height) / 2;
+                    window.open(shareUrl, 'shareWindow', `width=${width},height=${height},left=${left},top=${top},toolbar=0,status=0`);
+                }
             }
             closeShareModal();
         }
